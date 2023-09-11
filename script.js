@@ -67,7 +67,7 @@ const render = ({items}) => {
 
 
 document.addEventListener('DOMContentLoaded',async ()=>{
-    search('acciojob');
+    search('vrajbhav');
 })
 
 
