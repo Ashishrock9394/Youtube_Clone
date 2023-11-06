@@ -1,109 +1,194 @@
+const apiKey = "AIzaSyAbvc9ZtYWvAboBmCS2uklVHnCtdHwkfmU";
+// const apiKey = "AIzaSyCl7NyEJ2UubVUOlTdUL3sGiChPHUYws10";
+const baseUrl = "https://www.googleapis.com/youtube/v3";
+const searchInput = document.getElementById("search-input");
+const searchButton = document.getElementById("search-button");
+const vedioContainer = document.getElementById("vedio-container");
 
-const key = "AIzaSyBkHyzGWl90gAa1Es32pwcTz_Y3Tb6h9sI"
-const baseURL = "https://www.googleapis.com/youtube/v3";
+async function getVideoStatistics(videoId) {
+  const url = `${baseUrl}/videos?key=${apiKey}&part=statistics&id=${videoId}`;
+  try {
+    const response = await fetch(url);
+    const result = await response.json();
+    // console.log(result);
+    return result.items[0].statistics;
+  } catch (error) {
+    console.log("An error occurred:", error);
+    // alert("Mission failed.......");
+  }
+}
 
+async function fetchChannelLogo(channelId) {
+  const endpoint = `${baseUrl}/channels?key=${apiKey}&id=${channelId}&part=snippet`;
 
+  try {
+    const response = await fetch(endpoint);
+    const result = await response.json();
+    return result.items[0].snippet.thumbnails.high.url;
+  } catch (error) {
+    console.log("An error occurred:", error);
+    // alert("Failed to load channel logo for " + channelId);
+  }
+}
 
-const menu = document.getElementById("left-menu");
-const leftNav = document.getElementById('left-nav');
+// Generate the random video list on the browser when it loads
 
-menu.addEventListener('click',()=>{
-    if(leftNav.style.display == 'none' || leftNav.style.display == '') leftNav.style.display = 'flex';
-    else leftNav.style.display = 'none';
+// let currentIndex = 0;
+// const queries = ["funny cats", "cute puppies", "travel vlog", "cooking tutorial"];
+
+// window.onload = () => {
+//   const randomQuery = generateRandomQuery();
+//   fetchSearchResult(randomQuery);
+// };
+
+// function generateRandomQuery() {
+//   const query = queries[2];
+//   currentIndex = (currentIndex + 1) % queries.length;
+//   return query;
+// }
+let videoId;
+async function fetchSearchResult(searchString) {
+  const url = `${baseUrl}/search?key=${apiKey}&q=${searchString}&part=snippet&maxResults=6`;
+  try {
+    const response = await fetch(url);
+    const result = await response.json();
+    for (let i = 0; i < result.items.length; i++) {
+      videoId = result.items[i].id.videoId;
+      let channelId = result.items[i].snippet.channelId;
+
+      let statistics = await getVideoStatistics(videoId);
+      let channelLogo = await fetchChannelLogo(channelId);
+
+      result.items[i].statistics = statistics;
+      result.items[i].channelLogo = channelLogo;
+    }
+    // console.log(result);
+    // console.log("errrrrrrrrr");
+    renderVideoOnUI(result.items);
+  } catch (error) {
+    console.error("An error occurred:", error);
+    // alert("Some error occurred. " + error);
+  }
+}
+
+function calculateTheTimeGap(publishTime) {
+  let publishDate = new Date(publishTime);
+  let currentDate = new Date();
+
+  let secondsGap = (currentDate.getTime() - publishDate.getTime()) / 1000;
+
+  const secondsPerDay = 24 * 60 * 60;
+  const secondsPerWeek = 7 * secondsPerDay;
+  const secondsPerMonth = 30 * secondsPerDay;
+  const secondsPerYear = 365 * secondsPerDay;
+
+  if (secondsGap < secondsPerDay) {
+    return `${Math.ceil(secondsGap / (60 * 60))}hrs ago`;
+  }
+  if (secondsGap < secondsPerWeek) {
+    return `${Math.ceil(secondsGap / secondsPerWeek)} weeks ago`;
+  }
+  if (secondsGap < secondsPerMonth) {
+    return `${Math.ceil(secondsGap / secondsPerMonth)} months ago`;
+  }
+
+  return `${Math.ceil(secondsGap / secondsPerYear)} years ago`;
+}
+
+function renderVideoOnUI(videoList) {
+  const cardsToRemove = vedioContainer.querySelectorAll(".card");
+
+  // Loop through the selected elements and remove each one
+  cardsToRemove.forEach((card) => {
+    card.remove();
+  });
+
+  videoList.forEach((video) => {
+    const cardDynamic = document.createElement("div");
+    cardDynamic.className = "card";
+    cardDynamic.innerHTML = `
+      <img src="${video.snippet.thumbnails.high.url}" />
+      <div class="card-buttom">
+        <img src="${video.channelLogo}" alt="channel" />
+        <div class="description">
+          <h5>${video.snippet.title}</h5>
+          <p>${video.snippet.channelTitle}</p>
+          <p><span>${formatViewCount(video.statistics.viewCount)} views . </span><span>${calculateTheTimeGap(video.snippet.publishTime)}</span></p>
+        </div>
+      </div>
+    `;
+    // videoCard.innerHTML = innerHtmlCard;
+      const newPageUrl = `videopage.html`;
+      cardDynamic.addEventListener("click", function () {
+        sessionStorage.setItem("videoId", `${videoId}`);
+        window.location.href = newPageUrl;
+      });
+      // videoGrid.appendChild(videoCard);
+    vedioContainer.appendChild(cardDynamic);
+  });
+}
+
+function formatViewCount(count) {
+  if (count >= 1e9) {
+    return (count / 1e9).toFixed(1) + "B views";
+  } else if (count >= 1e6) {
+    return (count / 1e6).toFixed(1) + "M views";
+  } else if (count >= 1e3) {
+    return (count / 1e3).toFixed(1) + "K views";
+  } else {
+    return count + " views";
+  }
+}
+
+// Add a click event listener to the search button
+searchButton.addEventListener("click", () => {
+  const inputData = searchInput.value.trim();
+  fetchSearchResult(inputData);
+  searchInput.value = ""; // Clear the input field after clicking the button
+});
+
+searchInput.addEventListener("keypress", function (event) {
+  if (event.key === "Enter") {
+      event.preventDefault();
+      const inputData = searchInput.value.trim();
+      fetchSearchResult(inputData);
+      searchInput.value = ""; 
+  }
 });
 
 
-const fetchSearchResult = async (query) =>{
-    const response = await fetch(`${baseURL}/search?key=${key}&q=${query}&part=snippet&type=video&maxResults=50`);
-    const res = await response.json();
-
-    return res;
+function getSearchStringFromLocalStorage() {
+  return localStorage.getItem('searchString');
+}
+function handleSearchOnFirstPage() {
+  let searchString = getSearchStringFromLocalStorage();
+  if (searchString != null) {
+      localStorage.removeItem('searchString');
+      fetchSearchResult(searchString);
+  } else {
+      let initialVideoString = "Must Watch Sport"
+      fetchSearchResult(initialVideoString.trim());
+  }
 }
 
-const search = async(query) => {
-    const data = await fetchSearchResult(query);
-
-    render(data);
-}
+handleSearchOnFirstPage();
 
 
-const submitSearch = document.getElementById('submit-search');
-const searchText = document.getElementById('search');
+let headerItems = document.getElementsByClassName("right-navbar-search");
+// console.log(Array.from(headerItems));
 
-searchText.addEventListener('keypress',(e)=>{
-    if(e.key === 'Enter')
-    {
-        search(searchText.value);
-    }
-})
-
-
-const render = ({items}) => {
-    const target = document.getElementById('target');
-    target.innerHTML = "";
-    items.forEach(({snippet,id}) => {
-        
-        const videoBox = document.createElement('a');
-        videoBox.href = `videoDetail.html?id=${id.videoId}`
-        const channelId=snippet.channelId;
-
-        videoBox.innerHTML = `
-        <div class="video-box">
-            <img class="thumbnail" src='${snippet.thumbnails.high.url}'/>
-            <div class="video-title">
-                ${snippet.title.trim()}
-            <div>
-           
-        </div>
-        <a class='channel' href="channel.html?id=${channelId}">
-        ${snippet.channelTitle}
-        </a>
-        `
-
-        target.appendChild(videoBox);
-
+Array.from(headerItems).forEach((item) => {
+    item.addEventListener("click", () => {
+      fetchSearchResult(item.textContent);
+      console.log("clicked");
     });
-}
+});
 
 
-document.addEventListener('DOMContentLoaded',async ()=>{
-    search('vrajbhav');
+
+let headerLogo = document.getElementById("logo-load");
+
+headerLogo.addEventListener("click", () => {
+  localStorage.setItem('searchString', "Youtube Popular");
+  window.location.href = 'index.html';
 })
-
-
-submitSearch.addEventListener('click',async()=>{
-    const query = searchText.value;
-    if(query === '') return ;
-    console.log(`Searching for ${query}`);
-
-    //fetch data from API and display it on the page here...
-    search(query);
-    
-    // const {items} = data;
-    
-    // console.log(items);
-    
-
-    // const target = document.getElementById('target');
-    // target.innerHTML = "";
-
-    // items.forEach(({snippet,id}) => {
-
-    //     const videoBox = document.createElement('a');
-    //     videoBox.href = `videoDetail.html?id=${id.videoId}`
-
-    //     videoBox.innerHTML = `
-    //     <div class="video-box">
-    //         <img class="thumbnail" src='${snippet.thumbnails.high.url}'/>
-    //         <div class="video-title">
-    //             ${snippet.title.trim()}
-    //         <div>
-    //         <div class='channel'>
-    //             ${snippet.channelTitle}
-    //         </div>
-    //     </div>
-    //     `
-
-    //     target.appendChild(videoBox);
-
-    });
