@@ -1,5 +1,4 @@
-const apiKey = "AIzaSyAbvc9ZtYWvAboBmCS2uklVHnCtdHwkfmU";
-// const apiKey = "AIzaSyCl7NyEJ2UubVUOlTdUL3sGiChPHUYws10";
+const apiKey = "AIzaSyBkHyzGWl90gAa1Es32pwcTz_Y3Tb6h9sI";
 const baseUrl = "https://www.googleapis.com/youtube/v3";
 const searchInput = document.getElementById("search-input");
 const searchButton = document.getElementById("search-button");
@@ -10,7 +9,6 @@ async function getVideoStatistics(videoId) {
   try {
     const response = await fetch(url);
     const result = await response.json();
-    // console.log(result);
     return result.items[0].statistics;
   } catch (error) {
     console.log("An error occurred:", error);
@@ -31,45 +29,34 @@ async function fetchChannelLogo(channelId) {
   }
 }
 
-// Generate the random video list on the browser when it loads
-
-// let currentIndex = 0;
-// const queries = ["funny cats", "cute puppies", "travel vlog", "cooking tutorial"];
-
-// window.onload = () => {
-//   const randomQuery = generateRandomQuery();
-//   fetchSearchResult(randomQuery);
-// };
-
-// function generateRandomQuery() {
-//   const query = queries[2];
-//   currentIndex = (currentIndex + 1) % queries.length;
-//   return query;
-// }
 let videoId;
-async function fetchSearchResult(searchString) {
-  const url = `${baseUrl}/search?key=${apiKey}&q=${searchString}&part=snippet&maxResults=6`;
-  try {
-    const response = await fetch(url);
-    const result = await response.json();
-    for (let i = 0; i < result.items.length; i++) {
-      videoId = result.items[i].id.videoId;
-      let channelId = result.items[i].snippet.channelId;
-
-      let statistics = await getVideoStatistics(videoId);
-      let channelLogo = await fetchChannelLogo(channelId);
-
-      result.items[i].statistics = statistics;
-      result.items[i].channelLogo = channelLogo;
+async function fetchSearchResult(searchString, sortBy) {
+    const url = `${baseUrl}/search?key=${apiKey}&q=${searchString}&part=snippet&maxResults=20&order=${sortBy}`;
+    try {
+      const response = await fetch(url);
+      const result = await response.json();
+  
+      if (result.items) {
+        for (let i = 0; i < result.items.length; i++) {
+          videoId = result.items[i].id.videoId;
+          let channelId = result.items[i].snippet.channelId;
+  
+          let statistics = await getVideoStatistics(videoId);
+          let channelLogo = await fetchChannelLogo(channelId);
+  
+          result.items[i].statistics = statistics;
+          result.items[i].channelLogo = channelLogo;
+        //   console.log(result.items[i]);
+        }
+  
+        renderVideoOnUI(result.items);
+      } else {
+        console.error("No items found in the API response.");
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
     }
-    // console.log(result);
-    // console.log("errrrrrrrrr");
-    renderVideoOnUI(result.items);
-  } catch (error) {
-    console.error("An error occurred:", error);
-    // alert("Some error occurred. " + error);
   }
-}
 
 function calculateTheTimeGap(publishTime) {
   let publishDate = new Date(publishTime);
@@ -143,7 +130,8 @@ function formatViewCount(count) {
 // Add a click event listener to the search button
 searchButton.addEventListener("click", () => {
   const inputData = searchInput.value.trim();
-  fetchSearchResult(inputData);
+  const sortBy = document.getElementById("sort-by").value;
+  fetchSearchResult(inputData,sortBy);
   searchInput.value = ""; // Clear the input field after clicking the button
 });
 
@@ -151,7 +139,8 @@ searchInput.addEventListener("keypress", function (event) {
   if (event.key === "Enter") {
       event.preventDefault();
       const inputData = searchInput.value.trim();
-      fetchSearchResult(inputData);
+      const sortBy = document.getElementById("sort-by").value;
+      fetchSearchResult(inputData,sortBy);
       searchInput.value = ""; 
   }
 });
@@ -164,10 +153,12 @@ function handleSearchOnFirstPage() {
   let searchString = getSearchStringFromLocalStorage();
   if (searchString != null) {
       localStorage.removeItem('searchString');
-      fetchSearchResult(searchString);
+      const sortBy = document.getElementById("sort-by").value;
+      fetchSearchResult(searchString,sortBy);
   } else {
-      let initialVideoString = "Must Watch Sport"
-      fetchSearchResult(initialVideoString.trim());
+      let initialVideoString = "Cricket World Cup";
+      const sortBy = document.getElementById("sort-by").value;
+      fetchSearchResult(initialVideoString.trim(),sortBy);
   }
 }
 
@@ -180,7 +171,7 @@ let headerItems = document.getElementsByClassName("right-navbar-search");
 Array.from(headerItems).forEach((item) => {
     item.addEventListener("click", () => {
       fetchSearchResult(item.textContent);
-      console.log("clicked");
+    //   console.log("clicked");
     });
 });
 
