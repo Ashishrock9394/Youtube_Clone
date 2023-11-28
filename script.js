@@ -1,4 +1,5 @@
-const apiKey = "AIzaSyBkHyzGWl90gAa1Es32pwcTz_Y3Tb6h9sI";
+// const apiKey = "AIzaSyBkHyzGWl90gAa1Es32pwcTz_Y3Tb6h9sI";
+const apiKey = "AIzaSyBWSYFD1CT1t_d8Ade1_jt3ETl_QaCH2B4";  //priyanka ki key hai
 const baseUrl = "https://www.googleapis.com/youtube/v3";
 const searchInput = document.getElementById("search-input");
 const searchButton = document.getElementById("search-button");
@@ -30,8 +31,9 @@ async function fetchChannelLogo(channelId) {
 }
 
 let videoId;
-async function fetchSearchResult(searchString, sortBy) {
-    const url = `${baseUrl}/search?key=${apiKey}&q=${searchString}&part=snippet&maxResults=20&order=${sortBy}`;
+async function fetchSearchResult(searchString) {
+    // const url = `${baseUrl}/search?key=${apiKey}&q=${searchString}&part=snippet&maxResults=20&SearchSortOrder=${sortBy}`;
+    const url = `${baseUrl}/search?key=${apiKey}&q=${searchString}&part=snippet&maxResults=20&`;
     try {
       const response = await fetch(url);
       const result = await response.json();
@@ -46,7 +48,8 @@ async function fetchSearchResult(searchString, sortBy) {
   
           result.items[i].statistics = statistics;
           result.items[i].channelLogo = channelLogo;
-        //   console.log(result.items[i]);
+        //   console.log("likes" + result.items[i].statistics.likeCount);
+          console.log("views" + result.items[i].statistics.viewCount);
         }
   
         renderVideoOnUI(result.items);
@@ -130,8 +133,7 @@ function formatViewCount(count) {
 // Add a click event listener to the search button
 searchButton.addEventListener("click", () => {
   const inputData = searchInput.value.trim();
-  const sortBy = document.getElementById("sort-by").value;
-  fetchSearchResult(inputData,sortBy);
+  fetchSearchResult(inputData);
   searchInput.value = ""; // Clear the input field after clicking the button
 });
 
@@ -139,8 +141,7 @@ searchInput.addEventListener("keypress", function (event) {
   if (event.key === "Enter") {
       event.preventDefault();
       const inputData = searchInput.value.trim();
-      const sortBy = document.getElementById("sort-by").value;
-      fetchSearchResult(inputData,sortBy);
+      fetchSearchResult(inputData);
       searchInput.value = ""; 
   }
 });
@@ -153,12 +154,10 @@ function handleSearchOnFirstPage() {
   let searchString = getSearchStringFromLocalStorage();
   if (searchString != null) {
       localStorage.removeItem('searchString');
-      const sortBy = document.getElementById("sort-by").value;
-      fetchSearchResult(searchString,sortBy);
+      fetchSearchResult(searchString);
   } else {
       let initialVideoString = "Cricket World Cup";
-      const sortBy = document.getElementById("sort-by").value;
-      fetchSearchResult(initialVideoString.trim(),sortBy);
+      fetchSearchResult(initialVideoString.trim());
   }
 }
 

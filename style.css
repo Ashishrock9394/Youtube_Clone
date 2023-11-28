@@ -2,16 +2,21 @@
     margin: 0;
     padding: 0;
 } 
+:root{
+    --text1: #fff;
+    --text2: #7c7c7c;
+    --text3: #aaa;
+    --bg1: #000;
+    --bg2: #303030;
 
+}
 body {
     display: flex;
     overflow: hidden;
-    color: #F1F1F1;
-    background: #000;
+    color: var(--text1);
+    background: var(--bg1);
     flex-direction: column;
     flex: 1;
-
-    /* font-family: 'Poppins', sans-serif; */
     font-family: 'Roboto', sans-serif;
 }
 
@@ -52,7 +57,7 @@ body {
 .footer-bottom-text{
     font-size: 13px;
     font-weight: 100;
-    color: #AAAAAA;
+    color: var(--text3);
     white-space: normal;
     line-height: 18px;
 }
@@ -60,7 +65,7 @@ body {
     border-radius: 50%;
 }
 .upperside:hover{
-    background-color: #303030;
+    background-color: var(--bg2);
     cursor: pointer;
 }
 hr{
@@ -92,7 +97,7 @@ hr{
     align-items: center;
     padding: 0 25px;
     z-index: 2;
-    background: #000;
+    background: var(--bg1);
 }
 .nav-left{
     display: flex;
@@ -116,7 +121,7 @@ hr{
     align-items: center;
     width: 95%;
     border-radius: 30px;
-    border: 2px solid #303030;
+    border: 2px solid var(--bg2);
     overflow: hidden;
 }
 .input-area>.input{
@@ -128,7 +133,7 @@ hr{
 .input>input{
     width: 100%;
     background: transparent;
-    color: white;
+    color: var(--text1);
     border: none;
     outline: none;
     font-size: 18px;
@@ -136,15 +141,15 @@ hr{
 .input-area>.img{
     width: 10%;
     padding: 6px;
-    background: #222222;
+    background: var(--bg2);
     display: flex;
     justify-content:center;
     align-items: center;
-    border-left: 2px solid #303030 ;
+    border-left: 2px solid var(--bg2) ;
     cursor: pointer;
 }
 .mic{
-    background: #222222;
+    background: var(--bg2);
     padding: 8px 10px;
     border-radius: 50%;
     cursor: pointer;
@@ -169,18 +174,18 @@ hr{
     position: sticky;
     z-index: 2;
     top:0;
-    background: #000;
+    background: var(--bg1);
     overflow: hidden;
 }
 .navbar-scroll>div{
-    background: #272727;
+    background: var(--bg2);
     padding: 6px 10px;
     border-radius: 8px;
     white-space: nowrap;
     text-transform: capitalize;
 }
 .navbar-scroll>div:hover{
-    background: #303030;
+    background: var(--bg2);
     cursor: pointer;
 }
 .vedio-container{
@@ -205,14 +210,14 @@ hr{
     object-fit: cover;
 }
 h5{
-    color: #FFF;
+    color: var(--text1);
     font-family: Roboto;
     font-size: 16px;
     font-weight: 200;
     margin-bottom: 5px;
 }
 .description>p{
-    color:  #AAAA;
+    color:  var(--text2);
     font-size: 14px;
     font-weight: 400;
     line-height: 1.2rem;

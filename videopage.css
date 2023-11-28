@@ -1,3 +1,11 @@
+:root{
+  --text1: #fff;
+  --text2: #7c7c7c;
+  --text3: #aaa;
+  --bg1: #000;
+  --bg2: #303030;
+
+}
 body{
     overflow-y: scroll;
 }
@@ -5,7 +13,7 @@ body{
     margin-top: 8vh;
     width: 85vw;
     margin-inline: auto;
-    color: #fff;
+    color: var(--text1);
     display: flex;
     gap: 30px;
   }
@@ -20,7 +28,7 @@ body{
     width: 100%;
     border-radius: 10px;
     padding-top: 2vh;
-    box-shadow: rgba(133, 133, 133, 0.1) 0px 4px 12px;
+    box-shadow: var(--bg2) 0px 4px 12px;
   }
   
   .container__left .video iframe {
@@ -120,11 +128,11 @@ body{
   
   .channel-details-row .channel-name-sub .channel-subs-count {
     font-size: 14px;
-    color: #b5b5b5;
+    color: var(--text3);
   }
   
   .first-row-right button {
-    background-color: #fff;
+    background-color: var(--text1);
     padding: 10px 20px;
     border-radius: 40px;
     border: none;
@@ -156,7 +164,7 @@ body{
   
   .description-content .show-more-btn {
     font-size: 14px;
-    color: #b5b5b5;
+    color: var(--text3);
     font-weight: 800;
     cursor: pointer;
   }
@@ -184,7 +192,7 @@ body{
   
   .top-section .top-row .comments-count {
     font-size: 16px;
-    color: #b5b5b5;
+    color: var(--text3);
   }
   
   .top-section .top-row .sorting-option {
@@ -217,7 +225,7 @@ body{
   }
   
   .bottom-row-details-container .comment-adding-section input {
-    color: white;
+    color: var(--text1);
     background-color: #252525;
     outline: none;
     border: none;
@@ -259,12 +267,12 @@ body{
   
   .comment-details-top .comment-channel-top-top .comment-channel-name {
     font-size: 14px;
-    color: white;
+    color: var(--text1);
   }
   
   .comment-details-top .comment-channel-top-top .comment-date {
     font-size: 14px;
-    color: #707070;
+    color: var(--text2);
   }
   
   .comment-para {
@@ -314,7 +322,7 @@ body{
   }
   
   .container-right-header-ul .container-header-item {
-    background-color: #252525;
+    background-color: var(--bg2);
     padding: 8px 20px;
     border-radius: 20px;
     font-size: 14px;
@@ -323,13 +331,13 @@ body{
   }
   
   .container-right-header-ul .container-header-item:hover {
-    background-color: white;
-    color: black;
+    background-color: var(--text1);
+    color:var(--bg1);
   }
   
   #container-right-header-li-all {
-    background-color: white;
-    color: black;
+    background-color: var(--text1);
+    color: var(--bg1);
   }
   
   .related-video-seggetions {
@@ -370,7 +378,7 @@ body{
   }
   .small-video-card .right-div .video-channel-name {
     font-size: 14px;
-    color: #cccccc;
+    color: var(--text3);
   }
   
   .small-video-card .right-div .video-details {
@@ -378,14 +386,14 @@ body{
     align-items: center;
     font-size: 12px;
     gap: 3px;
-    color: #cccccc;
+    color: var(--text3);
   }
   
   .mob_search-div-details {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: rgb(37, 37, 37);
+    background-color: var(--bg2);
     user-select: none;
     display: none;
     font-size: 15px;
